@@ -9,6 +9,6 @@ RUN bundle install --deployment --without development test
 
 COPY . .
 
-ENV RAILS_ENV production
+#ENV RAILS_ENV production
 
 ENTRYPOINT ['./entrypoint.sh']
