@@ -11,4 +11,4 @@ COPY . .
 
 #ENV RAILS_ENV production
 
-ENTRYPOINT ['./entrypoint.sh']
+ENTRYPOINT ["./entrypoint.sh"]
