@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_05_21_132156) do
+ActiveRecord::Schema.define(version: 2019_06_03_152256) do
 
   create_table "routes", force: :cascade do |t|
     t.string "name"
@@ -18,6 +18,12 @@ ActiveRecord::Schema.define(version: 2019_05_21_132156) do
     t.integer "external_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "routes_stops", id: false, force: :cascade do |t|
+    t.integer "route_id", null: false
+    t.integer "stop_id", null: false
+    t.index ["route_id", "stop_id"], name: "index_routes_stops_on_route_id_and_stop_id", unique: true
   end
 
   create_table "stops", force: :cascade do |t|

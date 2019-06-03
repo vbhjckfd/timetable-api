@@ -2,6 +2,8 @@ class Stop < ApplicationRecord
 
     TIMETABLE_API_CALL = 'https://api.eway.in.ua/?login=lad.lviv&password=k3NhsvwLDai2ne9fn&function=stops.GetStopInfo&city=lviv&id=%{code}&v=1.2'
 
+    has_and_belongs_to_many :routes
+
     acts_as_mappable :default_units => :kms,
                      :default_formula => :flat,
                      :lat_column_name => :latitude,
