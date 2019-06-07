@@ -22,7 +22,7 @@ class StopController < ApplicationController
   end
 
   def closest
-    coords = params.require [:longitude, :latitude]
+    coords = params.require [:latitude, :longitude]
     accuracy = 300.to_f / 1000 * 2
 
     point = coords.map {|c| c.to_f.round(3) }
