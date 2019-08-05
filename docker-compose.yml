@@ -6,3 +6,9 @@ services:
       - RAILS_ENV=production
     ports:
      - "81:3000"
+  fe:
+    image: "vbhjckfd/timetable-fe"
+    environment:
+      - API_URL=http://api/
+    ports:
+     - "82:4567"

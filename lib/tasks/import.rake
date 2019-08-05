@@ -87,7 +87,7 @@ namespace :import do
 
     code = /(\(\d+\))/.match row[:stop_name]
     raise "No code for #{row[:stop_desc]}" if code.nil?
-    code = code[1][1..-2]
+    code = code[1][1..-2].trimzero
 
     begin
       Integer(code)
