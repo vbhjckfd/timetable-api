@@ -1,4 +1,6 @@
-FROM ruby:2.5-stretch
+FROM docker.io/ruby:2.6.2-alpine3.9
+
+RUN apk update && apk add --no-cache git build-base sqlite-dev curl
 
 RUN bundle config --global frozen 1
 
@@ -10,5 +12,7 @@ WORKDIR /application
 RUN bundle install --deployment --without development test
 
 COPY . /application/
+
+EXPOSE 80
 
 ENTRYPOINT ["./entrypoint.sh"]

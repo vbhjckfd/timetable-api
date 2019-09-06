@@ -1,3 +1,3 @@
-#!/bin/bash 
+#!/bin/sh
 
-bundle exec puma -p 3000 -t 8:32 -w 5
+RAILS_ENV=production bin/rails s -p 80 -b 0.0.0.0
