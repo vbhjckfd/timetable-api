@@ -17,10 +17,11 @@ namespace :import do
       data = {
         trips: {},
         stop_times: {},
+        stops: {},
       }
 
       zip.each do |entry|
-        content = entry.get_input_stream.read
+        content = entry.get_input_stream.read.force_encoding 'UTF-8'
 
         CSV.parse(content, headers: true, liberal_parsing: true) do |row|
           row = row.to_hash.symbolize_keys
@@ -28,6 +29,7 @@ namespace :import do
           case entry.name
           when 'stops.txt'
             begin
+              data[:stops][row[:stop_id]] = row
               import_stop row
             rescue ArgumentError
             rescue Exception => e
@@ -45,18 +47,89 @@ namespace :import do
         end
       end
 
-      routes_stops = {}
+      route_with_stops = {}
       data[:stop_times].each do |trip_id, stops|
         route_id = data[:trips][trip_id]
-        routes_stops[route_id] = {} unless routes_stops.has_key? route_id
-
-        routes_stops[route_id].merge! stops
+        route_with_stops[route_id] = [] unless route_with_stops.has_key? route_id
+        route_with_stops[route_id] << stops
       end
-      routes_stops.each {|k, v| routes_stops[k] = v.keys }
+      route_with_stops = route_with_stops.map {|k, v| 
+        stops = v.map {|h| h.keys}
 
-      data = nil # Save as much memory as we can
+        counts = {}
+        stops.each {|stops| counts[stops.to_s] = 0 }.each {|stops| counts[stops.to_s] += 1 }
+        counts = counts.sort_by {|_key, value| value}.slice(-2..-1).to_h
 
+        new_stops = stops.select{|stops| counts.has_key? stops.to_s }.uniq
+
+        [k, new_stops]
+      }.to_h
+
+      routes_stops = route_with_stops.map {|k, v| 
+        stops = v.flatten.uniq
+        [k, stops]
+      }.to_h
       import_route_stops routes_stops
+
+      let_stops = [2, 3, 4, 6, 7, 11, 12, 13, 14, 16, 18, 19, 20, 21, 23, 24, 25, 27, 28, 29, 30, 31, 32, 34, 35, 36, 37, 40, 42, 43, 46, 47, 48, 49, 50, 51, 52, 57, 58, 59, 60, 61, 63, 64, 65, 66, 68, 70, 73, 74, 75, 76, 78, 79, 80, 81, 85, 86, 94, 95, 96, 97, 98, 99, 100, 101, 104, 110, 113, 114, 115, 116, 119, 120, 121, 122, 128, 129, 130, 131, 132, 133, 134, 135, 136, 138, 146, 147, 148, 149, 150, 151, 153, 154, 155, 156, 166, 167, 168, 169, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 192, 194, 195, 196, 197, 219, 220, 221, 222, 223, 225, 226, 227, 238, 239, 240, 241, 242, 243, 245, 246, 247, 248, 251, 286, 293, 294, 298, 299, 306, 361, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 384, 385, 386, 387, 388, 390, 391, 393, 394, 395, 396, 423, 424, 426, 428, 429, 430, 431, 432, 433, 436, 453, 454, 455, 456, 457, 465, 466, 467, 468, 469, 474, 475, 476, 477, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 508, 509, 510, 511, 516, 517, 519, 524, 525, 527, 528, 531, 532, 533, 534, 536, 538, 539, 540, 541, 544, 545, 546, 548, 549, 550, 551, 552, 554, 555, 557, 558, 559, 560, 561, 562, 565, 566, 567, 568, 569, 579, 580, 581, 584, 608, 610, 611, 612, 613, 614, 615, 616, 617, 618, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 642, 648, 661, 671, 672, 673, 674, 675, 676, 678, 679, 682, 697, 703, 705, 707, 708, 728, 744, 745, 749, 753, 754, 771, 781, 782, 783, 784, 785, 786, 787, 788, 789, 790, 791, 792, 793, 794, 795, 796, 797]
+
+      let_stops = let_stops.map { |code|
+        s = Stop.find_by code: code
+        routes = s.routes.map {|r| 
+          current_route_with_trips = route_with_stops[r.external_id.to_s]
+          current_trip = current_route_with_trips.detect { |stops| stops.include?(s.external_id.to_s) or stops.last == s.external_id.to_s}
+          back_trip = current_route_with_trips.detect { |stops| stops != current_trip}
+
+          # if back_trip.nil? || current_trip.nil?
+          #   p s
+          #   p r
+            
+          #   p "Current: #{current_trip}"
+          #   p "Back: #{back_trip}"
+
+          #   p current_route_with_trips
+          #   p current_route_with_trips.map{|stops| stops.map {|stop| data[:stops][stop][:stop_name] } }
+          #   exit
+          # end
+
+          end_stop = data[:stops][back_trip.first]
+          end_stop_name = end_stop[:stop_name]
+
+          start_stop = data[:stops][current_trip.first]
+          start_stop_name = start_stop[:stop_name]
+
+          [
+            '(висадка) 0083', 
+            '(висадка)',
+            '-висадка', 
+            'висадка', 
+            ' (зв)', 
+            /\(\d+\-?\d*\)/
+          ].each {|k,v| 
+            end_stop_name.sub!(k,'')
+            start_stop_name.sub!(k,'')
+          }
+
+          [
+            r.name, 
+            ' ',
+            start_stop_name.squish,
+            ' - ',
+            end_stop_name.squish
+          ].join('')
+        }.reject(&:nil?).sort
+
+        [s.name, s.code, routes].flatten
+      }
+      
+      require 'csv'
+      CSV.open("/Users/mholyak/Downloads/myfile.csv", "w") do |csv|
+        let_stops.each do |l|
+          p l
+          csv << l
+        end
+      end
+
     end
   end
 

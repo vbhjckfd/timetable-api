@@ -1,0 +1,9 @@
+runtime: ruby25
+service: api
+entrypoint: bundle exec puma
+env_variables:
+  APP_ENV: production
+  THREAD_COUNT: 16
+instance_class: F1
+vpc_access_connector:
+  name: "projects/timetable-1530280542745/locations/us-east1/connectors/test23423423"

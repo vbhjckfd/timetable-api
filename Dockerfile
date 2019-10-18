@@ -1,6 +1,6 @@
-FROM docker.io/ruby:2.6.2-alpine3.9
+FROM docker.io/ruby:2.5.5-alpine
 
-RUN apk update && apk add --no-cache git build-base sqlite-dev curl
+RUN apk update && apk add --no-cache git build-base curl mariadb-dev
 
 RUN bundle config --global frozen 1
 

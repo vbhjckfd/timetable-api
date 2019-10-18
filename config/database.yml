@@ -21,5 +21,10 @@ test:
   database: db/test.sqlite3
 
 production:
-  <<: *default
-  database: db/production.sqlite3
+  adapter: mysql2
+  database: timetable
+  username: timetable
+  password: password
+  #username: root
+  #password: WHzGTnS9guXy
+  host: 10.142.0.5
