@@ -1,17 +1,16 @@
-FROM docker.io/ruby:2.5.5-alpine
+FROM ruby:2.6.5-stretch
 
-RUN apk update && apk add --no-cache git build-base curl mariadb-dev
+#RUN apt-get update && apt-get install sqlite3
 
-RUN bundle config --global frozen 1
-
-COPY Gemfile Gemfile.lock /application/
-
-# Change to the application's directory
-WORKDIR /application
-
-RUN bundle install --deployment --without development test
+#RUN apt-get update && apt-get install gcc sqlite-dev
+#RUN wget -c "https://sqlite.org/contrib/download/extension-functions.c/download/extension-functions.c?get=25" -O extension-functions.c
+#RUN gcc -fPIC -lm -shared extension-functions.c -o libsqlitefunctions.so
 
 COPY . /application/
+
+WORKDIR /application
+
+RUN bundle install
 
 EXPOSE 80
 

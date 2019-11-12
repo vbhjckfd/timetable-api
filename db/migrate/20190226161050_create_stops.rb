@@ -6,6 +6,7 @@ class CreateStops < ActiveRecord::Migration[6.0]
       t.float :longitude
       t.float :latitude
       t.integer :external_id
+      t.integer :easyway_id
 
       t.timestamps
     end

@@ -1,15 +1,32 @@
-version: '3'
+version: '3.2'
 services:
   api:
-    image: "vbhjckfd/timetable-api"
-    environment:
-      - RAILS_ENV=production
-      - RAILS_LOG_TO_STDOUT=true
+    build:
+      context: ./
+      dockerfile: Dockerfile
     ports:
-     - "80:80"
-  # fe:
-  #   image: "vbhjckfd/timetable-fe"
-  #   environment:
-  #     - API_URL=http://api/
-  #   ports:
-  #    - "82:4567"
+      - "80:80"
+    environment:
+      RAILS_ENV: 'production'
+      RAILS_LOG_TO_STDOUT: 'true'
+      RAILS_SERVE_STATIC_FILES: 'true'
+      MYSQL_ROOT_PASSWORD: 'password'
+    volumes:
+      - type: bind
+        source: ./
+        target: /application
+        consistency: delegated
+  db:
+    image: mysql:5.7
+    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8 --collation-server=utf8_general_ci
+    restart: always
+    volumes:
+      - type: bind
+        source: ./db/data
+        target: /var/lib/mysql
+        consistency: cached
+    ports:
+     - "3306:3306"
+    environment:
+      MYSQL_DATABASE: 'timetable'
+      MYSQL_ROOT_PASSWORD: 'password'

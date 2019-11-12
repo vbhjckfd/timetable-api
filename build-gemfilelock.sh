@@ -1,0 +1,1 @@
+docker run --rm -v $(pwd):/usr/src/app -w /usr/src/app ruby:2.6.5-stretch bundle lock
