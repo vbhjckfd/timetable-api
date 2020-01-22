@@ -145,6 +145,9 @@ namespace :import do
   end
 
   def import_stop(row)
+    excludes = [45002]
+    return if excludes.include? row[:stop_id]
+
     # {:stop_id=>"5129", :stop_code=>"153", :stop_name=>"\xD0\x90\xD0\xB5\xD1\x80\xD0\xBE\xD0\xBF\xD0\xBE\xD1\x80\xD1\x82", :stop_desc=>nil, :stop_lat=>"49.812833637475", :stop_lon=>"23.96170735359192", :zone_id=>"lviv_city", :stop_url=>nil, :location_type=>"0", :parent_station=>nil, :stop_timezone=>nil, :wheelchair_boarding=>"0"}
     [:stop_name, :stop_desc].each {|k| row[k] = row[k].to_s.force_encoding("UTF-8") }
 
