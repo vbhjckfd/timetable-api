@@ -12,6 +12,6 @@ WORKDIR /application
 
 RUN bundle install
 
-EXPOSE 80
+EXPOSE 3000
 
 ENTRYPOINT ["./entrypoint.sh"]
