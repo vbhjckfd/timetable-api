@@ -1,5 +1,5 @@
-require 'protobuf'
-require 'google/transit/gtfs-realtime.pb'
+#require 'protobuf'
+#require 'google/transit/gtfs-realtime.pb'
 require 'net/http'
 require 'uri'
 require 'csv'
@@ -10,8 +10,8 @@ namespace :import do
   
   desc "Import GTFS Static (stops, routes)"
   task static: :environment do
-    content = open('http://track.ua-gis.com/gtfs/lviv/static.zip')
-    #content = open('/Users/mholyak/Downloads/static.zip')
+    content = URI.open('http://track.ua-gis.com/gtfs/lviv/static.zip')
+    #content = URI.open('/Users/mholyak/Downloads/static.zip')
 
     Zip::File.open_buffer(content) do |zip|
       data = {

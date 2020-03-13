@@ -1,10 +1,6 @@
-FROM ruby:2.6.5-stretch
+FROM ruby:2.7-alpine
 
-#RUN apt-get update && apt-get install sqlite3
-
-#RUN apt-get update && apt-get install gcc sqlite-dev
-#RUN wget -c "https://sqlite.org/contrib/download/extension-functions.c/download/extension-functions.c?get=25" -O extension-functions.c
-#RUN gcc -fPIC -lm -shared extension-functions.c -o libsqlitefunctions.so
+RUN apk add --no-cache build-base libxml2-dev libxslt-dev mariadb-dev git curl
 
 COPY . /application/
 

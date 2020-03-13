@@ -18,9 +18,11 @@ class Stop < ApplicationRecord
     }
   
     def get_timetable
-      all_info = Rails.cache.fetch("stop_timetable/#{self.easyway_id}", expires_in: 1.minute) do
-        self.get_timetable_from_api
-      end
+      self.get_timetable_from_api
+
+      # all_info = Rails.cache.fetch("stop_timetable/#{self.easyway_id}", expires_in: 1.minute) do
+      #   self.get_timetable_from_api
+      # end
     end
   
     def get_timetable_from_api
